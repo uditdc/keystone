@@ -32,5 +32,3 @@ admin/public/styles/keystone.min.css
 reports
 
 test/e2e/drivers/*
-
-package-lock.json
