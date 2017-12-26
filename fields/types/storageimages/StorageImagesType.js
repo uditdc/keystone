@@ -4,7 +4,7 @@ var async = require('async');
 var FieldType = require('../Type');
 var keystone = require('../../../');
 var util = require('util');
-var sharp = require('sharp');
+var Jimp = require('jimp');
 var sizeOf = require('image-size');
 
 function getEmptyValue () {
@@ -45,20 +45,23 @@ var resizeImage = function (file, size) {
 			const formattedFileName = file.name.replace(/\.[^/.]+$/, '');
 			const resizedFileName = formattedFileName + '-' + formattedSize.join('x') + '.' + file.extension;
 			const resizedFilePath = '/tmp/' + resizedFileName;
-			sharp(file.path)
-				.resize(...formattedSize)
-				.toFile(resizedFilePath, function (err) {
-					if (!err) {
-						const imageSize = sizeOf(resizedFilePath);
 
-						file.path = resizedFilePath;
-						file.name = resizedFileName;
+			Jimp.read(file.path, function (err, image) {
+				if (!err && image) {
+					image.resize(...formattedSize)
+						.write(resizedFilePath, function(err) {
+							const imageSize = sizeOf(resizedFilePath);
+							file.path = resizedFilePath;
+							file.name = resizedFileName;
 
-						resolve(Object.assign({}, file, imageSize, { type: size.type }));
-					} else {
-						reject(err);
-					}
-				});
+							resolve(Object.assign({}, file, imageSize, { type: size.type }));
+						});
+				} else {
+					reject(err)
+				}
+			}).catch(function (err) {
+				reject(err)
+			});
 		} else {
 			const imageSize = sizeOf(file.path);
 			resolve(Object.assign({}, file, imageSize, { type: size.type }));
