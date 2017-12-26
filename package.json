@@ -94,7 +94,9 @@
     "string-to-stream": "1.1.0",
     "vkey": "1.0.1",
     "watchify": "3.9.0",
-    "xhr": "2.4.0"
+    "xhr": "2.4.0",
+    "sharp": "^0.18.4",
+    "image-size": "^0.6.2"
   },
   "devDependencies": {
     "@ljharb/eslint-config": "^11.0.0",
