@@ -52,7 +52,7 @@
     "kerberos": "0.0.23",
     "keystone-storage-namefunctions": "1.1.1",
     "keystone-utils": "0.4.0",
-    "knox": "keystonejs/knox",
+    "knox": "git://github.com/caremerge/knox.git#b1e031c209b3c17cab622a458e87728c1ee88cbd",
     "less-middleware": "2.2.1",
     "letsencrypt-express": "2.0.6",
     "list-to-array": "1.1.0",
