@@ -27,13 +27,12 @@ function getBucketUrl (bucket, url) {
  * Resize the images
  */
 var resizeImage = function (file, size) {
-	console.log('image to resize', file)
 	return new Promise(function (resolve, reject) {
 		const formattedSize = [];
 
 		if (size.type !== 'original') {
-			formattedSize.push(size.width);
-			if (size.height && size.height !== 'auto') formattedSize.push(size.height);
+			formattedSize.push((size.width && size.width !== 'auto') ? size.width : Jimp.AUTO);
+			formattedSize.push((size.height && size.height !== 'auto') ? size.height : Jimp.AUTO);
 		}
 
 		if (formattedSize.length > 0) {
@@ -44,7 +43,7 @@ var resizeImage = function (file, size) {
 			Jimp.read(file.path, function (err, image) {
 				if (!err && image) {
 					image.resize(...formattedSize)
-						.write(resizedFilePath, function(err) {
+						.write(resizedFilePath, function() {
 							const imageSize = sizeOf(resizedFilePath);
 							file.path = resizedFilePath;
 							file.name = resizedFileName;
