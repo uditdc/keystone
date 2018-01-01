@@ -43,7 +43,7 @@ var resizeImage = function (file, size) {
 			Jimp.read(file.path, function (err, image) {
 				if (!err && image) {
 					image.resize(...formattedSize)
-						.write(resizedFilePath, function() {
+						.write(resizedFilePath, function () {
 							const imageSize = sizeOf(resizedFilePath);
 							file.path = resizedFilePath;
 							file.name = resizedFileName;
@@ -51,10 +51,10 @@ var resizeImage = function (file, size) {
 							resolve(Object.assign({}, file, imageSize, { type: size.type }));
 						});
 				} else {
-					reject(err)
+					reject(err);
 				}
 			}).catch(function (err) {
-				reject(err)
+				reject(err);
 			});
 		} else {
 			const imageSize = sizeOf(file.path);

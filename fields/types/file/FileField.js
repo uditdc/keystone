@@ -1,8 +1,8 @@
 /**
-TODO:
-- Format size of stored file (if present) using bytes package?
-- Display file type icon? (see LocalFileField)
-*/
+ TODO:
+ - Format size of stored file (if present) using bytes package?
+ - Display file type icon? (see LocalFileField)
+ */
 
 import Field from '../Field';
 import React, { PropTypes } from 'react';
@@ -35,10 +35,10 @@ module.exports = Field.create({
 			filename: PropTypes.string,
 			// TODO: these are present but not used in the UI,
 			//       should we start using them?
-			// filetype: PropTypes.string,
-			// originalname: PropTypes.string,
-			// path: PropTypes.string,
-			// size: PropTypes.number,
+			url: PropTypes.string,
+			originalname: PropTypes.string,
+			path: PropTypes.string,
+			size: PropTypes.number,
 		}),
 	},
 	statics: {
@@ -71,7 +71,7 @@ module.exports = Field.create({
 	getFilename () {
 		return this.state.userSelectedFile
 			? this.state.userSelectedFile.name
-			: this.props.value.filename;
+			: <a href={this.props.value.url} target="_blank">{this.props.value.originalname}</a>;
 	},
 
 	// ==============================
