@@ -53,7 +53,6 @@ var resizeImage = function (file, size) {
 							const imageSize = sizeOf(resizedFilePath);
 							file.path = resizedFilePath;
 							file.name = resizedFileName;
-
 							resolve(Object.assign({}, file, imageSize, { type: size.type }));
 						});
 				} else {
@@ -268,13 +267,16 @@ storageimages.prototype.updateItem = function (item, data, files, callback) {
 			}
 		} else if (typeof value === 'object' && value.path) {
 			var sizes = field.options.sizes || [];
+			sizes = sizes.slice(0);
 			sizes.unshift({ type: 'admin', width: null, height: 90 });
 			sizes.unshift({ type: 'original' });
 
 			Promise.all(sizes.map(async (size, i) => {
 				const resizedImage = await resizeImage(value, size);
-				return new Promise((resolve, reject) => {
-					field.storage.uploadFile(resizedImage, (err, result) => !err ? resolve(Object.assign({}, result)) : reject(err));
+				return await new Promise((resolve, reject) => {
+					field.storage.uploadFile(resizedImage, function (err, result) {
+						(!err) ? resolve(Object.assign({}, result)) : reject(err);
+					});
 				});
 			})).then(result => {
 				const parsedResult = parseImageParams(result);

@@ -78,7 +78,7 @@ module.exports = Field.create({
 	},
 	getFilename () {
 		const { filename } = this.props.value;
-		console.log('file name', filename);
+
 		return this.state.userSelectedFile
 			? this.state.userSelectedFile.name
 			: filename;
@@ -90,7 +90,6 @@ module.exports = Field.create({
 			src = this.state.dataUri;
 		} else if (this.hasExisting()) {
 			if (size && typeof (this.props.value.sizes[size]) !== 'undefined') {
-				console.log('file to share', this.props.value);
 				src = this.props.value.sizes[size].url;
 			} else {
 				src = this.props.value.url;
