@@ -195,7 +195,6 @@ storageimages.prototype.getData = function (item) {
  * Deprecated
  */
 storageimages.prototype.inputIsValid = function (data) { // eslint-disable-line no-unused-vars
-	// TODO - how should image field input be validated?
 	return true;
 };
 
@@ -254,7 +253,8 @@ storageimages.prototype.updateItem = function (item, data, files, callback) {
 	});
 	values = _.flatten(values);
 
-	async.map(values, (value, next) => {
+	console.time('Total Upload Progress');
+	async.map(values, async (value, next) => {
 		if (typeof value === 'object' && 'etag' in value) {
 			// Cloudinary Image data provided
 			if (value.etag) {
@@ -266,22 +266,27 @@ storageimages.prototype.updateItem = function (item, data, files, callback) {
 				return next();
 			}
 		} else if (typeof value === 'object' && value.path) {
+			let uploadedImages = [];
 			var sizes = field.options.sizes || [];
 			sizes = sizes.slice(0);
 			sizes.unshift({ type: 'admin', width: null, height: 90 });
 			sizes.unshift({ type: 'original' });
 
-			Promise.all(sizes.map(async (size, i) => {
+			for	(let ui = 0; ui < sizes.length; ui++) {
+				const size = sizes[ui];
 				const resizedImage = await resizeImage(value, size);
-				return await new Promise((resolve, reject) => {
+				console.time('upload' + value.path);
+				const uploadedImage = await new Promise((resolve, reject) => {
 					field.storage.uploadFile(resizedImage, function (err, result) {
 						(!err) ? resolve(Object.assign({}, result)) : reject(err);
 					});
 				});
-			})).then(result => {
-				const parsedResult = parseImageParams(result);
-				return next(null, parsedResult);
-			});
+				console.timeEnd('upload' + value.path);
+				uploadedImages.push(uploadedImage);
+			}
+
+			const parsedResult = parseImageParams(uploadedImages);
+			return next(null, parsedResult);
 		} else {
 			// Nothing to do
 			// TODO: We should really also support deleting images from cloudinary,
@@ -289,6 +294,7 @@ storageimages.prototype.updateItem = function (item, data, files, callback) {
 			return next();
 		}
 	}, function (err, result) {
+		console.timeEnd('Total Upload Progress');
 		if (err) return callback(err);
 		result = result.filter(truthy);
 		item.set(field.path, result);
