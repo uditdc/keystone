@@ -180,7 +180,7 @@ module.exports = Field.create({
 	renderLightbox () {
 		const { value } = this.props;
 
-		if (!value || !value.public_id) return;
+		if (!value || !value.etag) return;
 
 		return (
 			<Lightbox
